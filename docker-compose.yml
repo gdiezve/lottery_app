@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+    lottery_app:
+        build: .
+        container_name: lottery-service
+        volumes:
+            - ./lottery_app:/usr/src/app/lottery_app
+            - ./lottery:/usr/src/app/lottery
+        env_file: ./lottery_app/.env
+        environment:
+            - PGUSER=postgres
+            - PGPASSWORD=admin
+        ports:
+            - "8000:8000"
+        depends_on:
+            db:
+                condition: service_healthy
+
+    db:
+        image: postgres:15.3
+        container_name: lottery-database
+        restart: always
+        environment:
+            - POSTGRES_USER=postgres
+            - POSTGRES_PASSWORD=admin
+            - POSTGRES_DB=lottery
+            - PGUSER=postgres
+        ports:
+            - "5432"
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready"]
+            interval: 60s
+            timeout: 5s
+            retries: 10

@@ -1,0 +1,6 @@
+django~=4.2.4
+django-environ
+django-crontab
+djangorestframework
+environ
+psycopg
